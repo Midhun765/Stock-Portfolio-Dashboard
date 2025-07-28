@@ -1,4 +1,4 @@
-import { initialPortfolio } from "@/types/portfolio";
+import { initialPortfolio, nseResult } from "@/types/portfolio";
 import yahooFinance from "yahoo-finance2";
 
 export async function scrapeYahooCMP(symbol: string): Promise<number | string> {
@@ -10,12 +10,11 @@ export async function scrapeYahooCMP(symbol: string): Promise<number | string> {
         if (isNumeric && portfolio) {
             const searchResults = await yahooFinance.search(portfolio.particulars);
 
-            const nseResult: any = searchResults.quotes.find((q: any) => {
+            const nseResult: nseResult | undefined = searchResults.quotes.find((q: nseResult) => {
                 return (
                     q?.symbol?.endsWith(".BO")
                 );
             });
-
             if (!nseResult || !nseResult.symbol) {
                 return '';
             }

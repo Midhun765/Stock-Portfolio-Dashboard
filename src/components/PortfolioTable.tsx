@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { SECTOR_GROUPS, Stock } from '../types/portfolio';
 import axios from 'axios';
 import classNames from 'classnames';
@@ -15,7 +15,7 @@ export const PortfolioTable = ({ stocks }: Props) => {
     const [collapsedSectors, setCollapsedSectors] = useState<Record<string, boolean>>({});
     const [mounted, setMounted] = useState(false);
 
-    const fetchCMP = async () => {
+    const fetchCMP = useCallback(async () => {
         const updated = await Promise.all(
             stocks.map(async (stock) => {
                 try {
@@ -36,17 +36,14 @@ export const PortfolioTable = ({ stocks }: Props) => {
             })
         );
         setData(updated);
-    };
-
-    useEffect(() => {
-        fetchCMP();
-        const interval = setInterval(fetchCMP, 15000);
-        return () => clearInterval(interval);
-    }, []);
+    }, [stocks]);
 
     useEffect(() => {
         setMounted(true);
-    }, []);
+        fetchCMP();
+        const interval = setInterval(fetchCMP, 15000);
+        return () => clearInterval(interval);
+    }, [fetchCMP]);
 
     const toggleSector = (sector: string) => {
         setCollapsedSectors((prev) => ({
