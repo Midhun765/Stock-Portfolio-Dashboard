@@ -14,6 +14,7 @@ export const PortfolioTable = ({ stocks }: Props) => {
     const [data, setData] = useState<Stock[]>(stocks);
     const [collapsedSectors, setCollapsedSectors] = useState<Record<string, boolean>>({});
     const [mounted, setMounted] = useState(false);
+    const [showLoadMessage, setShowLoadMessage] = useState(true);
 
     const fetchCMP = useCallback(async () => {
         const updated = await Promise.all(
@@ -56,6 +57,20 @@ export const PortfolioTable = ({ stocks }: Props) => {
 
     return (
         <div className="overflow-x-auto p-4">
+            <div className="flex justify-end mb-4">
+                {showLoadMessage && (
+                    <div className="mb-4 p-2 bg-blue-100 text-blue-800 rounded text-sm font-medium flex justify-between items-start">
+                        <span>Please wait up to 2 minutes for the data to load.</span>
+                        <button
+                            onClick={() => setShowLoadMessage(false)}
+                            className="ml-4 text-blue-600 hover:text-blue-800 focus:outline-none"
+                            aria-label="Dismiss"
+                        >
+                            &times;
+                        </button>
+                    </div>
+                )}
+            </div>
             <table className="min-w-full table-auto border border-black-700">
                 <thead className="bg-gray-100">
                     <tr>
